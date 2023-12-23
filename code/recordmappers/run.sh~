@@ -1,0 +1,5 @@
+#!/bin/bash
+
+java -cp target/recordmappers-1.0-jar-with-dependencies.jar \
+     -Dmapper.generator.classesDir=target/test-classes \
+     io.github.homberghp.recordmappers.MapperGeneratorRunner client

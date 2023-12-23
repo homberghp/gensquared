@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.homberghp</groupId>
+        <artifactId>gensquared</artifactId>
+        <version>1.0</version>
+        <relativePath>../gensquared</relativePath>
+    </parent>
+    <artifactId>recordmappers</artifactId>
+    <version>1.0</version>
+    <packaging>jar</packaging>
+    <name>recordmappers</name>
+    <properties>
+        <!-- <exec.mainClass>nl.hitbay.generics.mapper.MapperGenerator</exec.mainClass> -->
+        <!-- add add-opens lines for all packages in your module that are tested.
+             For testing it is fine to open your packages for the whole world, which includes
+             e.g. junit, assertj, mockito, and jacoco.
+             Also leave ${argLine} because it is set/used by the coverage plugin.
+        -->
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>io.github.homberghp</groupId>
+            <artifactId>gensquared-annotations</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
+</project>
+
