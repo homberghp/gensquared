@@ -25,8 +25,8 @@ class EntityBuilder<Y extends Record> {
 
     final EntityBuilder<Y> addfieldValue( String fieldName, String value,
             boolean quotedValue ) {
-        System.out.print( "fieldName = " + fieldName );
-        System.out.println( ",value = " + value );
+//        System.out.print( "fieldName = " + fieldName );
+//        System.out.println( ",value = " + value );
         int fieldNumber = indexOf( fieldName );
         if ( 0 <= fieldNumber && fieldNumber < mapper.recordArraySize() ) {
             Object object;

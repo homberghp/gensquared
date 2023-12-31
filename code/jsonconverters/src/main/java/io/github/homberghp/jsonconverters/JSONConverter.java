@@ -16,7 +16,13 @@
 package io.github.homberghp.jsonconverters;
 
 import io.github.homberghp.recordmappers.RecordMapper;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import static java.util.stream.Collectors.joining;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -26,12 +32,29 @@ public class JSONConverter<R extends Record> {
 
     final RecordMapper<R, ?> mapper;
 
-    public JSONConverter(Class<R> forRecord) {
+    private JSONConverter(Class<R> forRecord) {
         this.mapper = RecordMapper.mapperFor( forRecord );
     }
 
+    private static final ConcurrentMap<Class<? extends Record>, JSONConverter> cache = new ConcurrentHashMap<>();
+
+    public static JSONConverter forRecord(Class<? extends Record> forRecord) {
+        return cache.computeIfAbsent( forRecord, JSONConverter::new );
+    }
+
     public String toJSON(R r) {
-        return "";
+        Object[] params = mapper.deconstruct( r );
+        List<RecordMapper.EditHelper> editHelpers = mapper.editHelpers();
+        String collect = IntStream.range( 0, editHelpers.size() )
+                .mapToObj( i -> jsonQuote( editHelpers.get( i ).fieldName(), params[ i ] ) )
+                .collect( joining( ", " ) );
+        return "{ " + collect
+                + " }";
+    }
+
+    static String jsonQuote(String name, Object value) {
+        boolean dontQuote = null == value || value instanceof Number || value instanceof Boolean;
+        return "\"" + name + "\":" + ( dontQuote ? Objects.toString( value ) : "\"" + Objects.toString( value ) + "\"" );
     }
 
     public R fromJSON(String json) {

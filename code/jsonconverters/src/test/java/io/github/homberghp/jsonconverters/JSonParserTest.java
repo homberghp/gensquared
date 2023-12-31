@@ -14,7 +14,6 @@ import org.junit.jupiter.api.*;
 public class JSonParserTest {
 
     Class<Student> clz = Student.class;
-    RecordMapper<Student,Integer> studentMapper = RecordMapper.mapperFor(  clz );
 
 //    @Disabled("Think TDD")
     @Test
@@ -34,12 +33,10 @@ public class JSonParserTest {
                          "active":true 
                        }
                        """;
-        System.out.println( "jason = " + jason );
         Optional<Student> jantje = m.parse( jason );
         assertThat( jantje ).isNotEmpty();//.get().isEqualTo( jan );
         Student get = jantje.get();
         assertThat( get ).isEqualTo( jan );
-        System.out.println( "get = " + get );
 //        fail( "method parse reached end. You know what to do." );
     }
 
@@ -60,7 +57,6 @@ public class JSonParserTest {
                        }
                        """;
         JsonParser<Student> m = JsonParser.forType( Student.class );
-        System.out.println( "jason = " + jason );
         Optional<Student> jantje = m.parse( jason );
         assertThat( jantje ).isNotEmpty();//.get().isEqualTo( jan );
         Student getJan = jantje.get();

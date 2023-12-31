@@ -1,5 +1,5 @@
 /*
- * The code in this class is generated on 2023-12-31T11:37:54.762067795.
+ * The code in this class is generated on 2023-12-31T12:29:31.832678220.
  * Do not edit, your changes will be lost on the next build of your project.
  */
 package sampleentities;
