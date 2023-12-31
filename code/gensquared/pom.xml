@@ -17,10 +17,10 @@
     </properties>
     <modules>
         <module>../gensquared_annotations</module>
-        <module>../gensquared_mappers</module>
 	<module>../recordmappers</module>
-        <!-- <module>../mapperplugin</module> -->
-        <!-- <module>../sampleentities</module>  -->
+         <module>../mapperplugin</module> 
+	<!--<module>../jsonconverters</module>-->
+         <module>../sampleentities</module>  
     </modules>
 </project>
 

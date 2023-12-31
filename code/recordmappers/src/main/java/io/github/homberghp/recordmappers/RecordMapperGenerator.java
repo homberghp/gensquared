@@ -89,7 +89,7 @@ public class RecordMapperGenerator {
                                     %10$s
                                  );
                              
-                               protected List<EditHelper> editHelpers(){
+                               public List<EditHelper> editHelpers(){
                                     return editHelpers;
                                }
                              
@@ -114,7 +114,7 @@ public class RecordMapperGenerator {
         String importStatement = "import " + rklass.getCanonicalName();
         String simpleClassName = rklass.getSimpleName();
         Field keyComponent = keyComponent();
-        String keyType = simplestClassName( keyComponent.getType());
+        String keyType = simplestClassName( RecordMapper.getCasterFor( keyComponent.getType()));
         String keyFieldName = keyComponent.getName();
         String ctorParamsWithCast = ctorParamsWithCast();
         String deconstructorArrayElements = deconstructorArrayElements();
@@ -137,8 +137,8 @@ public class RecordMapperGenerator {
                 .filter( r -> r.isAnnotationPresent( ID.class ) )
                 .findFirst()
                 .or( this::getFieldNamedId )
-                .orElseThrow( () -> new NoSuchFieldError(
-                "Can't infer id-field for record " + rklass.getName() ) );
+                .orElse( declaredFields[0] ); // default to first field to prevent exceptions.
+                //field for record " + rklass.getName() ) );
     }
 
     private String ctorParamsWithCast() {
@@ -165,7 +165,7 @@ public class RecordMapperGenerator {
 
     Optional<Field> getFieldNamedId() {
         return Arrays.stream( declaredFields )
-                .peek( System.out::println )
+//                .peek( System.out::println )
                 .filter( r -> r.getName().toLowerCase().endsWith( "id" ) )
                 .findFirst();
     }

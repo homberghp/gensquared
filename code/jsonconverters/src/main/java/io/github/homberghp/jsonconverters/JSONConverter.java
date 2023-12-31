@@ -13,14 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package entities;
+package io.github.homberghp.jsonconverters;
 
-import io.github.homberghp.gensquared_annotations.ID;
+import io.github.homberghp.recordmappers.RecordMapper;
+import java.util.Map;
 
 /**
  *
  * @author Pieter van den Hombergh {@code <pieter.van.den.hombergh@gmail.com>}
  */
-public record StudentKlass(@ID String studentKlassId, String Description ) {
+public class JSONConverter<R extends Record> {
 
+    final RecordMapper<R, ?> mapper;
+
+    public JSONConverter(Class<R> forRecord) {
+        this.mapper = RecordMapper.mapperFor( forRecord );
+    }
+
+    public String toJSON(R r) {
+        return "";
+    }
+
+    public R fromJSON(String json) {
+        Map<String, Object> params = Map.of();
+        return mapper.construct( params );
+    }
 }

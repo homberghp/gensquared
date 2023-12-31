@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.logging.Level;
+import static java.util.logging.Level.INFO;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -105,7 +106,7 @@ public class MapperGeneratorRunner {
                         .map( s -> s.substring( 0,
                         s.length() - ".class".length() ) )
                         .map( s -> s.replace( fileSep, "." ) )
-                        .peek( c -> System.out.println( "[INFO] generating mapper for entitiy class '" + c + "'" ) )
+                        .peek( c -> System.out.println( "[INFO] possibly generating mapper for entitiy class '" + c + "'" ) )
                         .collect( Collectors.toSet() );
             }
         } else {
@@ -137,7 +138,9 @@ public class MapperGeneratorRunner {
         URLClassLoader cl = new URLClassLoader( new URL[]{
             Path.of( classesDir ).toUri().toURL()
         } );
+        System.out.println( "entityNames = " + entityNames);
         for ( String entityName : entityNames ) {
+            System.out.println( "entityName = " + entityName );
             Class<?> clz = Class.forName( entityName, true, cl );
             if ( clz.isRecord() ) {
                 var rklass = (Class<? extends Record>) clz;
@@ -145,12 +148,20 @@ public class MapperGeneratorRunner {
                 File dir = new File( fileName );
                 dir.getParentFile().mkdirs();
                 String javaSource = new RecordMapperGenerator( rklass ).javaSource();
+                System.out.println( "javaSource = " + javaSource );
                 if ( !javaSource.isBlank() ) {
                     try ( PrintStream out = new PrintStream( fileName ) ) {
                         out.print( javaSource );
                         out.flush();
                     }
+                    System.out.println( "gererated mapper" + mapperTypeName( clz )
+                            + " for entity " + clz.getCanonicalName() );
+//                    Logger.getLogger( MapperGeneratorRunner.class.getName() )
+//                            .log( INFO, "gererated mapper {0} for entity {1}"
+//                                    .formatted( mapperTypeName( clz ), clz.getCanonicalName() ) );
                 }
+            } else {
+                System.out.println( "clz " + clz + "is not a record" );
             }
         }
     }

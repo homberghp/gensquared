@@ -1,10 +1,10 @@
 /*
- * The code in this class is generated on 2023-12-29T17:41:43.268698891.
+ * The code in this class is generated on 2023-12-31T11:37:54.761216834.
  * Do not edit, your changes will be lost on the next build of your project.
  */
-package entities;
+package sampleentities;
 
-import entities.Student;
+import sampleentities.Student;
 import java.util.function.Function;
 import java.util.List;
 import io.github.homberghp.recordmappers.RecordMapper;
@@ -34,7 +34,7 @@ public class StudentMapper extends RecordMapper<Student, Integer> {
                       Integer.class.cast( fieldValues[ 5 ] ),
                       String.class.cast( fieldValues[ 6 ] ),
                       String.class.cast( fieldValues[ 7 ] ),
-                      entities.StudentKlass.class.cast( fieldValues[ 8 ] ),
+                      String.class.cast( fieldValues[ 8 ] ),
                       Boolean.class.cast( fieldValues[ 9 ] ) );
     }
 
@@ -76,11 +76,11 @@ public class StudentMapper extends RecordMapper<Student, Integer> {
          new EditHelper( "cohort", Integer.class ),
          new EditHelper( "email", String.class ),
          new EditHelper( "gender", String.class ),
-         new EditHelper( "student_class", entities.StudentKlass.class ),
+         new EditHelper( "student_class", String.class ),
          new EditHelper( "active", Boolean.class )
       );
 
-    protected List<EditHelper> editHelpers(){
+    public List<EditHelper> editHelpers(){
          return editHelpers;
     }
 

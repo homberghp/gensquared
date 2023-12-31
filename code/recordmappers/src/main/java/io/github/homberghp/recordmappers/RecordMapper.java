@@ -93,25 +93,55 @@ public abstract class RecordMapper<R extends Record, K> implements RecordEdit<R,
 
     }
 
-    protected abstract List<EditHelper> editHelpers();
+    public abstract List<EditHelper> editHelpers();
 
     /**
+     * The size of the record to (de)construct a record of type {@code <R>}.
+     * @return the size
+     */
+    public int recordArraySize() {
+        return editHelpers().size();
+    }
+
+    /**
+     * 'Edit' means returning a new record with changes applied.
      *
-     * @param orginal
-     * @param changes
-     * @return
+     * @param orginal input
+     * @param changes to apply
+     * @return a new record
      */
     public final R edit(R orginal, Map<String, Object> changes) {
         Object[] params = deconstruct( orginal );
+        return construct( changes, params );
+    }
+
+    /**
+     * Helper.
+     *
+     * @param params to the construction
+     * @param receiver array that collects the input to the constructor.
+     * @return a new record
+     */
+    private R construct(Map<String, Object> params, Object[] receiver) {
         var helpers = editHelpers();
         for ( int i = 0; i < helpers.size(); i++ ) {
             EditHelper helper = helpers.get( i );
             String fieldName = helper.fieldName();
-            if ( changes.containsKey( fieldName ) ) {
-                params[ i ] = helper.guard.cast( changes.get( fieldName ) );
+            if ( params.containsKey( fieldName ) ) {
+                receiver[ i ] = helper.guard.cast( params.get( fieldName ) );
             }
         }
-        return construct( params );
+        return construct( receiver );
+    }
+
+    /**
+     * Construct a new record from the information in the params map.
+     *
+     * @param params input
+     * @return a new record.
+     */
+    public final R construct(Map<String, Object> params) {
+        return construct( params, new Object[ editHelpers().size() ] );
     }
 
     /**

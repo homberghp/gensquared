@@ -7,11 +7,12 @@
         <version>1.0</version>
         <relativePath>../gensquared</relativePath>
     </parent>
-    <artifactId>recordmappers</artifactId>
+    <artifactId>jsonconverter</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
-    <name>recordmappers</name>
+    <name>jsonconverter</name>
     <properties>
+        <!-- <exec.mainClass>nl.hitbay.generics.mapper.MapperGenerator</exec.mainClass> -->
         <!-- add add-opens lines for all packages in your module that are tested.
              For testing it is fine to open your packages for the whole world, which includes
              e.g. junit, assertj, mockito, and jacoco.
@@ -22,6 +23,12 @@
         <dependency>
             <groupId>io.github.homberghp</groupId>
             <artifactId>gensquared-annotations</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>io.github.homberghp</groupId>
+            <artifactId>recordmappers</artifactId>
             <version>1.0</version>
             <type>jar</type>
         </dependency>

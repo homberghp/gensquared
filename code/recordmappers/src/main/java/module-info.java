@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-module recordmappers {
+module io.github.homberghp.recordmappers {
     requires io.github.homberghp.gensquared_annotations;
     requires java.logging;
     exports io.github.homberghp.recordmappers;

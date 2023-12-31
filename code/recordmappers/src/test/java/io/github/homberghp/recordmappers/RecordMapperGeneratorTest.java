@@ -15,6 +15,8 @@
  */
 package io.github.homberghp.recordmappers;
 
+import io.github.homberghp.gensquared_annotations.Generated;
+import io.github.homberghp.gensquared_annotations.ID;
 import java.lang.reflect.Field;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -27,11 +29,14 @@ import static org.assertj.core.api.Assertions.*;
  */
 public class RecordMapperGeneratorTest {
 
+    record F(@ID String f_id, @Generated int age, double latitude){
+    
+    }
     
     //@Disabled("think TDD")
     @Test
     public void testGetFieldNamedId() {
-        RecordMapperGenerator rmg= new RecordMapperGenerator(entities.F.class);
+        RecordMapperGenerator rmg= new RecordMapperGenerator(F.class);
         Optional<Field> fieldNamedId = rmg.getFieldNamedId();
         assertThat(fieldNamedId).isNotEmpty();
         assertThat(fieldNamedId.get().getName()).isEqualTo( "f_id");
@@ -41,7 +46,7 @@ public class RecordMapperGeneratorTest {
     //@Disabled("think TDD")
     @Test
     public void testJavaSource() {
-        RecordMapperGenerator rmg= new RecordMapperGenerator(entities.F.class);
+        RecordMapperGenerator rmg= new RecordMapperGenerator(F.class);
         String javaSource = rmg.javaSource();
         assertThat(javaSource).contains( "FMapper extends RecordMapper<F, String>");
 //        fail( "method testJavaSource reached end. You know what to do." );
