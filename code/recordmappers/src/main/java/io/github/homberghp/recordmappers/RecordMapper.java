@@ -190,7 +190,7 @@ public abstract class RecordMapper<R extends Record, K> implements RecordEdit<R,
         return MapperRegistry.mapperFor( et );
     }
 
-    private static String mapperName(Class<? extends Record> forEntity) {
+    public static final String mapperName(Class<? extends Record> forEntity) {
         return forEntity.getCanonicalName() + "Mapper";
     }
 
@@ -198,7 +198,7 @@ public abstract class RecordMapper<R extends Record, K> implements RecordEdit<R,
 
         private MapperRegistry() {
         } // no values
-        private static final ConcurrentMap<Class<? extends Record>, RecordMapper<?, ?>> register = new ConcurrentHashMap<>();
+        private static final ConcurrentMap<Class<? extends Record>, RecordMapper<? extends Record, ?>> register = new ConcurrentHashMap<>();
 
         /**
          * Retrieve a mapper for the given type. The mapper is either loaded by
@@ -267,7 +267,7 @@ public abstract class RecordMapper<R extends Record, K> implements RecordEdit<R,
      * @param <EM> type of mapper
      * @param em mapper to register.
      */
-    public static <EM extends RecordMapper> void register(EM em) {
+    public static <SR extends Record,EM extends RecordMapper<SR, ?>> void register(EM em) {
         MapperRegistry.register( em );
     }
 
