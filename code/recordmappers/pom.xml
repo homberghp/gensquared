@@ -17,6 +17,9 @@
              e.g. junit, assertj, mockito, and jacoco.
              Also leave ${argLine} because it is set/used by the coverage plugin.
         -->
+        <surefire.opens>
+            --add-reads io.github.homberghp.recordmappers=java.compiler
+        </surefire.opens>
     </properties>
     <dependencies>
         <dependency>

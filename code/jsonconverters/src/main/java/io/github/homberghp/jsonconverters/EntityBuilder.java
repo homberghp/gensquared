@@ -18,15 +18,13 @@ class EntityBuilder<Y extends Record> {
     final RecordMapper<Y, ?> mapper;
     final Object[] receiver;
 
-    EntityBuilder( Class<Y> clz ) {
+    EntityBuilder(Class<Y> clz) {
         this.mapper = RecordMapper.mapperFor( clz );
         receiver = new Object[ mapper.recordArraySize() ];
     }
 
-    final EntityBuilder<Y> addfieldValue( String fieldName, String value,
-            boolean quotedValue ) {
-//        System.out.print( "fieldName = " + fieldName );
-//        System.out.println( ",value = " + value );
+    final EntityBuilder<Y> addfieldValue(String fieldName, String value,
+            boolean quotedValue) {
         int fieldNumber = indexOf( fieldName );
         if ( 0 <= fieldNumber && fieldNumber < mapper.recordArraySize() ) {
             Object object;
@@ -40,7 +38,7 @@ class EntityBuilder<Y extends Record> {
         return this;
     }
 
-    Object convertFromString( int fieldNumber, String value ) {
+    Object convertFromString(int fieldNumber, String value) {
         Object object;
         Function<String, Object> orDefault
                 = conversionMap.getOrDefault( mapper.editHelpers().get(
@@ -53,12 +51,12 @@ class EntityBuilder<Y extends Record> {
     // candidate to move to mapper.
     private Map<String, Integer> positionMap;
 
-    final int indexOf( String fieldName ) {
+    final int indexOf(String fieldName) {
 
         if ( positionMap == null ) {
             positionMap = Map.ofEntries( IntStream.range( 0, receiver.length )
                     .mapToObj( i -> Map.entry( mapper.editHelpers().get( i ).fieldName(), i ) )
-                    .toArray( Map.Entry[]::new ) 
+                    .toArray( Map.Entry[]::new )
             );
         }
         return positionMap.getOrDefault( fieldName, -1 );

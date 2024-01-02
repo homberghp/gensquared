@@ -17,5 +17,6 @@
 module io.github.homberghp.recordmappers {
     requires io.github.homberghp.gensquared_annotations;
     requires java.logging;
+    requires java.compiler;
     exports io.github.homberghp.recordmappers;
 }

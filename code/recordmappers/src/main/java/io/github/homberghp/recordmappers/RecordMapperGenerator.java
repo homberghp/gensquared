@@ -35,7 +35,7 @@ public class RecordMapperGenerator {
 
     static String template = """
                            /*
-                            * The code in this class is generated on %9$s. 
+                            * The code in this class is generated on %10$s. 
                             * Do not edit, your changes will be lost on the next build of your project.
                             */
                            package %1$s;
@@ -50,43 +50,43 @@ public class RecordMapperGenerator {
                             * Maps %3$s class.
                             * 
                             */
-                           public class %3$sMapper extends RecordMapper<%3$s, %4$s> {
+                           public class %4$s extends RecordMapper<%3$s, %5$s> {
                            
-                               private %3$sMapper() {
+                               private %4$s() {
                                    super(%3$s.class);
                                }
                            
                                static {
-                                   RecordMapper.register( new %3$sMapper() );
+                                   RecordMapper.register( new %4$s() );
                                }
                            
                                @Override
                                public %3$s construct(Object[] fieldValues) {
-                                   return new %3$s( %5$s );
+                                   return new %3$s( %6$s );
                                }
                            
                                @Override
-                               public Object[] deconstruct(%3$s %7$s) {
-                                   return new Object[]{ %6$s };
+                               public Object[] deconstruct(%3$s %8$s) {
+                                   return new Object[]{ %7$s };
                                }
                            
                                @Override
-                               public Function<? super %3$s, ? extends %4$s> keyExtractor() {
-                                   return %7$s -> %7$s.%8$s();
+                               public Function<? super %3$s, ? extends %5$s> keyExtractor() {
+                                   return %8$s -> %8$s.%9$s();
                                }
                            
                                @Override
                                public Class<?> keyType() {
-                                   return %4$s.class;
+                                   return %5$s.class;
                                }
                            
                                @Override
                                public String keyName() {
-                                   return "%8$s";
+                                   return "%9$s";
                                }
                              
                                private static List<EditHelper> editHelpers = List.of(
-                                    %10$s
+                                    %11$s
                                  );
                              
                                public List<EditHelper> editHelpers(){
@@ -114,21 +114,23 @@ public class RecordMapperGenerator {
         String importStatement = "import " + rklass.getCanonicalName();
         String simpleClassName = rklass.getSimpleName();
         Field keyComponent = keyComponent();
-        String keyType = simplestClassName( RecordMapper.getCasterFor( keyComponent.getType()));
+        String keyType = simplestClassName( RecordMapper.getCasterFor( keyComponent.getType() ) );
         String keyFieldName = keyComponent.getName();
         String ctorParamsWithCast = ctorParamsWithCast();
         String deconstructorArrayElements = deconstructorArrayElements();
+        String mapperName = getMapperSimpleName();
         return template.formatted(
                 packageName, // 1 package
                 importStatement, //2 import
                 simpleClassName, // 3 type name
-                keyType, // 4 key type
+                mapperName, // 4 mappername
+                keyType, // 5 key type
                 ctorParamsWithCast, // 6 record components and casts
-                deconstructorArrayElements, // 6 array elements
-                instanceName, // 7 instance name
-                keyFieldName, // 8 name of key
-                LocalDateTime.now(),
-                editHelpers()
+                deconstructorArrayElements, // 7 array elements
+                instanceName, // 8 instance name
+                keyFieldName, // 9 name of key
+                LocalDateTime.now(), // 10 timestamp
+                editHelpers() // 11 edithelpers
         );
     }
 
@@ -137,8 +139,8 @@ public class RecordMapperGenerator {
                 .filter( r -> r.isAnnotationPresent( ID.class ) )
                 .findFirst()
                 .or( this::getFieldNamedId )
-                .orElse( declaredFields[0] ); // default to first field to prevent exceptions.
-                //field for record " + rklass.getName() ) );
+                .orElse( declaredFields[ 0 ] ); // default to first field to prevent exceptions.
+        //field for record " + rklass.getName() ) );
     }
 
     private String ctorParamsWithCast() {
@@ -165,7 +167,7 @@ public class RecordMapperGenerator {
 
     Optional<Field> getFieldNamedId() {
         return Arrays.stream( declaredFields )
-//                .peek( System.out::println )
+                //                .peek( System.out::println )
                 .filter( r -> r.getName().toLowerCase().endsWith( "id" ) )
                 .findFirst();
     }
@@ -183,14 +185,27 @@ public class RecordMapperGenerator {
             entry( float.class, Float.class ),
             entry( double.class, Double.class )
     );
-    
-    String editHelpers(){
+
+    String editHelpers() {
         RecordComponent[] recordComponents = rklass.getRecordComponents();
-        return Arrays.stream( recordComponents)
+        return Arrays.stream( recordComponents )
                 .map( rc -> """
                             new EditHelper( "%1$s", %2$s )"""
-                        .formatted( rc.getName(), 
-                                simplestClassName( CASTERMAP.getOrDefault( rc.getType(),rc.getType()))+".class" ))
-                .collect( joining(",\n         "));
+                .formatted( rc.getName(),
+                        simplestClassName( CASTERMAP.getOrDefault( rc.getType(), rc.getType() ) ) + ".class" ) )
+                .collect( joining( ",\n         " ) );
+    }
+
+    public final String getMapperTypeName() {
+        return rklass.getTypeName() + "Mapper";
+    }
+
+    public final String getMapperSimpleName() {
+        String[] split = getMapperTypeName().split( "\\.");
+        return split[split.length-1];
+    }
+
+    public final String getMapperCanonicalName() {
+        return rklass.getCanonicalName() + "Mapper";
     }
 }
