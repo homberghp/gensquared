@@ -24,7 +24,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.homberghp</groupId>
-            <artifactId>gensquared-annotations</artifactId>
+            <artifactId>gensquared_annotations</artifactId>
             <version>1.0</version>
             <type>jar</type>
         </dependency>

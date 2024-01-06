@@ -71,15 +71,17 @@ public class RecordMapperGeneratorTest {
         
         String mapperName = F.class.getName() + "Mapper";
         var mapperPath = mapperName.replace( ".", fileSep ) + ".java";
-        var compilerDirs = new CompilerDirs( tempDir, new String[]{ "src", "main", "java" }, new String[]{ "target", "classes" } );
+        var compilerDirs = new CompilerDirs( tempDir );
         Path sourcePath = compilerDirs.sourcePath( mapperPath );
         Files.createDirectories( sourcePath.getParent() );
         String javaSource = rmg.javaSource();
+        System.out.println( "javaSource = " + javaSource );
         Files.writeString( sourcePath, javaSource, Charset.forName( "UTF-8" ) );
         var exitCode = runCompiler( compilerDirs, sourcePath );
         assertThat( exitCode ).isEqualTo( 0 );
         // cleanup if test passes
         cleanupOnExit(tempDir);
+//        fail( "method testCodeIsCompilable reached end. You know what to do." );
     }
 
     private void cleanupOnExit(final Path tempDir) {
@@ -129,11 +131,15 @@ public class RecordMapperGeneratorTest {
         int exitCode = process.waitFor();
         return exitCode;
 
-//        fail( "method testCodeIsCompileable reached end. You know what to do." );
     }
 
     record CompilerDirs(Path tempDir, String[] sourceDir, String[] targetDir) {
 
+        public CompilerDirs(Path tempDir) {
+            this( tempDir, new String[]{ "src", "main", "java" },new String[]{ "target", "classes" });
+        }
+
+        
         Path sourcePath(String javaFile) {
             var p = Arrays.copyOf( sourceDir, sourceDir.length + 1 );
             p[ p.length - 1 ] = javaFile;

@@ -18,11 +18,16 @@ package io.github.homberghp.recordmappers;
 import java.util.List;
 import java.util.Map;
 import static java.util.Map.entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  *
@@ -89,7 +94,28 @@ public abstract class RecordMapper<R extends Record, K> implements RecordEdit<R,
      */
     public abstract String keyName();
 
-    public record EditHelper(String fieldName, Class<?> guard) {
+    private Set<String> generatedFieldNames = null;
+
+    public Set<String> generatedFieldNames() {
+        if ( null == generatedFieldNames ) {
+            generatedFieldNames = Set.copyOf( editHelpers().stream().filter( eh -> eh.generated() ).map( EditHelper::fieldName ).collect( toSet() ) );
+        }
+        return generatedFieldNames;
+    }
+    public List<FieldPair> nonGeneratedFieldPairs(R r){
+        Object[] fields = this.deconstruct( r );
+        return IntStream.range( 0,recordArraySize())
+                .filter(i -> !editHelpers().get(i).generated())
+                .mapToObj(j->new FieldPair(editHelpers().get(j).fieldName(), fields[j] ))
+                .collect(toList());
+    }
+
+    public record EditHelper(String fieldName, Class<?> guard, boolean generated) {
+
+        // default annotations is not present.
+        public EditHelper(String fieldName, Class<?> guard) {
+            this( fieldName, guard, false );
+        }
 
     }
 
@@ -97,6 +123,7 @@ public abstract class RecordMapper<R extends Record, K> implements RecordEdit<R,
 
     /**
      * The size of the record to (de)construct a record of type {@code <R>}.
+     *
      * @return the size
      */
     public int recordArraySize() {
@@ -267,8 +294,28 @@ public abstract class RecordMapper<R extends Record, K> implements RecordEdit<R,
      * @param <EM> type of mapper
      * @param em mapper to register.
      */
-    public static <SR extends Record,EM extends RecordMapper<SR, ?>> void register(EM em) {
+    public static <SR extends Record, EM extends RecordMapper<SR, ?>> void register(EM em) {
         MapperRegistry.register( em );
+    }
+
+    /**
+     * Simple name + value record.
+     */
+    public record FieldPair(String name, Object fieldValue) {
+
+    }
+
+    /**
+     * Stream a record as name value pair.
+     *
+     * @param r
+     * @return
+     */
+    public Stream<FieldPair> stream(R r) {
+        Object[] a = deconstruct( r );
+        List<EditHelper> helpers = editHelpers();
+        return IntStream.range( 0, helpers.size() )
+                .mapToObj( i -> new FieldPair( helpers.get( i ).fieldName(), a[ i ] ) );
     }
 
 }

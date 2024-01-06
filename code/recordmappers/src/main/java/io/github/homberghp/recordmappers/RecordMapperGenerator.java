@@ -15,7 +15,9 @@ package io.github.homberghp.recordmappers;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import io.github.homberghp.gensquared_annotations.Generated;
 import io.github.homberghp.gensquared_annotations.ID;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.RecordComponent;
 import java.time.LocalDateTime;
@@ -186,13 +188,35 @@ public class RecordMapperGenerator {
             entry( double.class, Double.class )
     );
 
+    boolean isGenerated(Annotation ann) {
+        if ( null == ann ) {
+            return false;
+        }
+
+        if ( ann.annotationType() == Generated.class ) {
+            return true;
+        }
+        if ( ann instanceof ID id && id.generated() ) {
+            return true;
+        }
+        return false;
+    }
+
     String editHelpers() {
         RecordComponent[] recordComponents = rklass.getRecordComponents();
         return Arrays.stream( recordComponents )
-                .map( rc -> """
-                            new EditHelper( "%1$s", %2$s )"""
-                .formatted( rc.getName(),
-                        simplestClassName( CASTERMAP.getOrDefault( rc.getType(), rc.getType() ) ) + ".class" ) )
+                .map( rc -> {
+                    Annotation[] declaredAnnotations = rc.getDeclaredAnnotations();
+                    Annotation ann = declaredAnnotations.length == 0 ? null : declaredAnnotations[ 0 ];
+                    boolean generated = isGenerated( ann );
+                    return """
+                      new EditHelper( "%1$s", %2$s, %3$s )"""
+                            .formatted( rc.getName(),
+                                    simplestClassName( CASTERMAP.getOrDefault( rc.getType(), rc.getType() ) ) + ".class",
+                                    Boolean.toString( generated )
+                            );
+
+                } )
                 .collect( joining( ",\n         " ) );
     }
 
@@ -201,8 +225,8 @@ public class RecordMapperGenerator {
     }
 
     public final String getMapperSimpleName() {
-        String[] split = getMapperTypeName().split( "\\.");
-        return split[split.length-1];
+        String[] split = getMapperTypeName().split( "\\." );
+        return split[ split.length - 1 ];
     }
 
     public final String getMapperCanonicalName() {
