@@ -1,5 +1,5 @@
 /*
- * The code in this class is generated on 2023-12-31T12:29:31.945877817.
+ * The code in this class is generated on 2024-01-11T15:46:44.183594551.
  * Do not edit, your changes will be lost on the next build of your project.
  */
 package testentities;
@@ -57,14 +57,15 @@ public class PersonMapper extends RecordMapper<Person, String> {
         return "lastname";
     }
 
-    private static List<EditHelper> editHelpers = List.of(
-         new EditHelper( "lastname", String.class ),
-         new EditHelper( "tussenvoegsel", String.class ),
-         new EditHelper( "firstname", String.class ),
-         new EditHelper( "dob", java.time.LocalDate.class ),
-         new EditHelper( "gender", String.class )
+    private static final List<EditHelper> editHelpers = List.of(
+         new EditHelper( "lastname", String.class, false ),
+         new EditHelper( "tussenvoegsel", String.class, false ),
+         new EditHelper( "firstname", String.class, false ),
+         new EditHelper( "dob", java.time.LocalDate.class, false ),
+         new EditHelper( "gender", String.class, false )
       );
 
+    @Override
     public List<EditHelper> editHelpers(){
          return editHelpers;
     }

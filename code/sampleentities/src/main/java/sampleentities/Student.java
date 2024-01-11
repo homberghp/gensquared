@@ -1,5 +1,6 @@
 package sampleentities;
 
+import io.github.homberghp.gensquared_annotations.ID;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -8,7 +9,7 @@ import java.time.LocalDate;
  *
  * @author Pieter van den Hombergh {@code pieter.van.den.hombergh@gmail.com}
  */
-public record Student(Integer snummer, String lastname, String tussenvoegsel,
+public record Student(@ID Integer snummer, String lastname, String tussenvoegsel,
         String firstname, LocalDate dob, int cohort, String email,
         String gender, String student_class, Boolean active) implements Serializable {
 

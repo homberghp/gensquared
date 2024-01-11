@@ -15,8 +15,7 @@
  */
 package io.github.homberghp.recordmappers;
 
-import io.github.homberghp.gensquared_annotations.Generated;
-import io.github.homberghp.gensquared_annotations.ID;
+import entities.Employee;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -84,6 +83,22 @@ public class RecordMapperGeneratorTest {
 //        fail( "method testCodeIsCompilable reached end. You know what to do." );
     }
 
+    //@Disabled("think TDD")
+    @Test
+    public void testEditHelpers() {
+        RecordMapperGenerator rmg = new RecordMapperGenerator( Employee.class );
+        String editHelpers = rmg.editHelpers();
+        System.out.println( "editHelpers for Employee = " + editHelpers );
+        assertThat(editHelpers).contains( 
+                """
+                new EditHelper( "employeeid", Integer.class, true )""",
+                """
+                new EditHelper( "lastname", String.class, false )"""
+                );
+//        fail( "method testEditHelpers reached end. You know what to do." );
+    }
+    
+    
     private void cleanupOnExit(final Path tempDir) {
         Runnable r = () -> {
             try {
@@ -132,7 +147,8 @@ public class RecordMapperGeneratorTest {
         return exitCode;
 
     }
-
+    
+  
     record CompilerDirs(Path tempDir, String[] sourceDir, String[] targetDir) {
 
         public CompilerDirs(Path tempDir) {
@@ -150,4 +166,6 @@ public class RecordMapperGeneratorTest {
             return Path.of( tempDir.toString(), targetDir );
         }
     }
+    
+    
 }

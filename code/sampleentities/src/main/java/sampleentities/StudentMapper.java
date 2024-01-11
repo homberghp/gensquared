@@ -1,5 +1,5 @@
 /*
- * The code in this class is generated on 2023-12-31T12:29:31.831904416.
+ * The code in this class is generated on 2024-01-11T15:46:43.826507098.
  * Do not edit, your changes will be lost on the next build of your project.
  */
 package sampleentities;
@@ -67,19 +67,20 @@ public class StudentMapper extends RecordMapper<Student, Integer> {
         return "snummer";
     }
 
-    private static List<EditHelper> editHelpers = List.of(
-         new EditHelper( "snummer", Integer.class ),
-         new EditHelper( "lastname", String.class ),
-         new EditHelper( "tussenvoegsel", String.class ),
-         new EditHelper( "firstname", String.class ),
-         new EditHelper( "dob", java.time.LocalDate.class ),
-         new EditHelper( "cohort", Integer.class ),
-         new EditHelper( "email", String.class ),
-         new EditHelper( "gender", String.class ),
-         new EditHelper( "student_class", String.class ),
-         new EditHelper( "active", Boolean.class )
+    private static final List<EditHelper> editHelpers = List.of(
+         new EditHelper( "snummer", Integer.class, false ),
+         new EditHelper( "lastname", String.class, false ),
+         new EditHelper( "tussenvoegsel", String.class, false ),
+         new EditHelper( "firstname", String.class, false ),
+         new EditHelper( "dob", java.time.LocalDate.class, false ),
+         new EditHelper( "cohort", Integer.class, false ),
+         new EditHelper( "email", String.class, false ),
+         new EditHelper( "gender", String.class, false ),
+         new EditHelper( "student_class", String.class, false ),
+         new EditHelper( "active", Boolean.class, false )
       );
 
+    @Override
     public List<EditHelper> editHelpers(){
          return editHelpers;
     }

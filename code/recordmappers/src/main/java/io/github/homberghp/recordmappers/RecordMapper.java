@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
+import java.util.function.IntPredicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
@@ -102,12 +103,14 @@ public abstract class RecordMapper<R extends Record, K> implements RecordEdit<R,
         }
         return generatedFieldNames;
     }
-    public List<FieldPair> nonGeneratedFieldPairs(R r){
+
+    public List<FieldPair> nonGeneratedFieldPairs(R r) {
         Object[] fields = this.deconstruct( r );
-        return IntStream.range( 0,recordArraySize())
-                .filter(i -> !editHelpers().get(i).generated())
-                .mapToObj(j->new FieldPair(editHelpers().get(j).fieldName(), fields[j] ))
-                .collect(toList());
+        IntPredicate generated = i -> editHelpers().get( i ).generated();
+        return IntStream.range( 0, recordArraySize() )
+                .filter( generated.negate() )
+                .mapToObj( j -> new FieldPair( editHelpers().get( j ).fieldName(), fields[ j ] ) )
+                .collect( toList() );
     }
 
     public record EditHelper(String fieldName, Class<?> guard, boolean generated) {

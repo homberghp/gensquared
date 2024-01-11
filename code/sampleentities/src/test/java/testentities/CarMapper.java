@@ -1,5 +1,5 @@
 /*
- * The code in this class is generated on 2023-12-31T12:29:31.945339979.
+ * The code in this class is generated on 2024-01-11T15:46:44.182942300.
  * Do not edit, your changes will be lost on the next build of your project.
  */
 package testentities;
@@ -53,12 +53,13 @@ public class CarMapper extends RecordMapper<Car, String> {
         return "brand";
     }
 
-    private static List<EditHelper> editHelpers = List.of(
-         new EditHelper( "brand", String.class ),
-         new EditHelper( "color", String.class ),
-         new EditHelper( "engine", testentities.Engine.class )
+    private static final List<EditHelper> editHelpers = List.of(
+         new EditHelper( "brand", String.class, false ),
+         new EditHelper( "color", String.class, false ),
+         new EditHelper( "engine", testentities.Engine.class, false )
       );
 
+    @Override
     public List<EditHelper> editHelpers(){
          return editHelpers;
     }

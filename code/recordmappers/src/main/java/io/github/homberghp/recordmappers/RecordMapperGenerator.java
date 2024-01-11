@@ -19,7 +19,6 @@ import io.github.homberghp.gensquared_annotations.Generated;
 import io.github.homberghp.gensquared_annotations.ID;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.RecordComponent;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Map;
@@ -34,7 +33,7 @@ import java.util.stream.IntStream;
  * @author Pieter van den Hombergh {@code <pieter.van.den.hombergh@gmail.com>}
  */
 public class RecordMapperGenerator {
-
+    
     static String template = """
                            /*
                             * The code in this class is generated on %10$s. 
@@ -87,10 +86,11 @@ public class RecordMapperGenerator {
                                    return "%9$s";
                                }
                              
-                               private static List<EditHelper> editHelpers = List.of(
+                               private static final List<EditHelper> editHelpers = List.of(
                                     %11$s
                                  );
                              
+                               @Override
                                public List<EditHelper> editHelpers(){
                                     return editHelpers;
                                }
@@ -104,13 +104,13 @@ public class RecordMapperGenerator {
     private final Class<? extends Record> rklass;
     private final Field[] declaredFields;
     private final String instanceName;
-
+    
     public RecordMapperGenerator(Class<? extends Record> rklass) {
         this.rklass = rklass;
         declaredFields = rklass.getDeclaredFields();
         instanceName = rklass.getSimpleName().substring( 0, 1 ).toLowerCase();
     }
-
+    
     public final String javaSource() {
         String packageName = rklass.getPackageName();
         String importStatement = "import " + rklass.getCanonicalName();
@@ -135,7 +135,7 @@ public class RecordMapperGenerator {
                 editHelpers() // 11 edithelpers
         );
     }
-
+    
     public Field keyComponent() {
         return Arrays.stream( declaredFields )
                 .filter( r -> r.isAnnotationPresent( ID.class ) )
@@ -144,29 +144,29 @@ public class RecordMapperGenerator {
                 .orElse( declaredFields[ 0 ] ); // default to first field to prevent exceptions.
         //field for record " + rklass.getName() ) );
     }
-
+    
     private String ctorParamsWithCast() {
         return IntStream.range( 0, declaredFields.length )
                 .mapToObj( i -> castExpression( i ) )
                 .collect( Collectors.joining( ",\n                      " ) );
     }
-
+    
     private String castExpression(int i) {
         Class<?> castType = RecordMapper.getCasterFor( declaredFields[ i ].getType() );
         String clzName = simplestClassName( castType );
         return clzName + ".class.cast( fieldValues[ " + i + " ] )";
     }
-
+    
     String simplestClassName(Class<?> klass) {
         return klass.getPackageName().equals( "java.lang" ) ? klass.getSimpleName() : klass.getCanonicalName();
     }
-
+    
     private String deconstructorArrayElements() {
         return Arrays.stream( declaredFields )
                 .map( rc -> instanceName + "." + rc.getName() + "()" )
                 .collect( Collectors.joining( ",\n                             " ) );
     }
-
+    
     Optional<Field> getFieldNamedId() {
         return Arrays.stream( declaredFields )
                 //                .peek( System.out::println )
@@ -187,12 +187,12 @@ public class RecordMapperGenerator {
             entry( float.class, Float.class ),
             entry( double.class, Double.class )
     );
-
+    
     boolean isGenerated(Annotation ann) {
         if ( null == ann ) {
             return false;
         }
-
+        
         if ( ann.annotationType() == Generated.class ) {
             return true;
         }
@@ -201,10 +201,10 @@ public class RecordMapperGenerator {
         }
         return false;
     }
-
+    
     String editHelpers() {
-        RecordComponent[] recordComponents = rklass.getRecordComponents();
-        return Arrays.stream( recordComponents )
+        Field[] recordFields = rklass.getDeclaredFields();
+        return Arrays.stream( recordFields )
                 .map( rc -> {
                     Annotation[] declaredAnnotations = rc.getDeclaredAnnotations();
                     Annotation ann = declaredAnnotations.length == 0 ? null : declaredAnnotations[ 0 ];
@@ -215,20 +215,21 @@ public class RecordMapperGenerator {
                                     simplestClassName( CASTERMAP.getOrDefault( rc.getType(), rc.getType() ) ) + ".class",
                                     Boolean.toString( generated )
                             );
-
+                    
                 } )
+                .peek( System.out::println )
                 .collect( joining( ",\n         " ) );
     }
-
+    
     public final String getMapperTypeName() {
         return rklass.getTypeName() + "Mapper";
     }
-
+    
     public final String getMapperSimpleName() {
         String[] split = getMapperTypeName().split( "\\." );
         return split[ split.length - 1 ];
     }
-
+    
     public final String getMapperCanonicalName() {
         return rklass.getCanonicalName() + "Mapper";
     }

@@ -1,11 +1,13 @@
 /*
- * The code in this class is generated on 2024-01-11T14:08:48.824444050.
+ * The code in this class is generated on 2024-01-11T15:35:16.402750320.
  * Do not edit, your changes will be lost on the next build of your project.
  */
 package io.github.homberghp.recordmappers;
 
+import io.github.homberghp.recordmappers.F;
 import java.util.function.Function;
 import java.util.List;
+import io.github.homberghp.recordmappers.RecordMapper;
 import static io.github.homberghp.recordmappers.RecordMapper.EditHelper;
 
 /**
