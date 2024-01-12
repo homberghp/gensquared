@@ -13,28 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package client;
 
-import io.github.homberghp.recordmappers.RecordMapper;
-import java.util.List;
-import org.junit.jupiter.api.Test;
-//import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.*;
+import io.github.homberghp.recordmappers.RecordMapperGenerator;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import sampleentities.Student;
- 
+
 /**
  *
  * @author Pieter van den Hombergh {@code <pieter.van.den.hombergh@gmail.com>}
  */
-public class StudentMapperTest {
+public class AnnTester {
 
-    //@Disabled("think TDD")
-    @Test
-    public void idShouldBeGenerated() {
-        RecordMapper<Student,Integer> rm = RecordMapper.mapperFor( Student.class);
-        List<RecordMapper.EditHelper> editHelpers = rm.editHelpers();
-        boolean allMatch = editHelpers.stream().peek(System.out::println ).filter( eh -> eh.fieldName().equals("snummer") ).allMatch( x -> x.generated());
-        assertThat(allMatch).isTrue();
-        
-        fail( "method idShouldBeGenerated reached end. You know what to do." );
+    public static void main(String[] args) {
+        Class<?> clz = Student.class;
+        Field[] declaredFields = clz.getDeclaredFields();
+        for ( Field df : declaredFields ) {
+            Annotation[] annotations = df.getAnnotations();
+            System.out.println( "annotations = " + Arrays.toString( annotations ) );
+            System.out.println( "df = " + df );
+        }
+        RecordMapperGenerator rmg= new RecordMapperGenerator(Student.class);
+        String javaSource = rmg.javaSource();
+        System.out.println( "javaSource = " + javaSource );
     }
 }

@@ -14,6 +14,7 @@
     <name>gensquared :: parent</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.release>17</java.release>
     </properties>
     <modules>
         <module>../gensquared_annotations</module>
@@ -21,6 +22,7 @@
          <module>../mapperplugin</module> 
 	<!--<module>../jsonconverters</module>-->
          <module>../sampleentities</module>  
+         <module>../anntester</module>  
     </modules>
 </project>
 

@@ -43,21 +43,21 @@ public class RecordMapperGeneratorMojo extends AbstractMojo {
         try {
             makeTargetDirs();
             compileSources();
+            System.exit( 0 );
 //            System.out.println( "outDir = " + outDir );
             var runner = new GeneratorRunner( classesDir, outDir, entityPackages,
                     getDependencyJars() );
             runner.run();
 //            compileGenerated();
-        } catch ( IOException | DependencyResolutionRequiredException
-                 ex ) {
-            Logger.getLogger(RecordMapperGeneratorMojo.class.getName() )
+        } catch ( IOException | DependencyResolutionRequiredException ex ) {
+            Logger.getLogger( RecordMapperGeneratorMojo.class.getName() )
                     .log( Level.SEVERE, null, ex );
         }
     }
 
     @Parameter( property = "mapper.entities.packages", defaultValue = "false" )
     protected List<String> entityPackages;
-    
+
     private final Set<String> entityDirTails = new HashSet<>();
 
     /**
@@ -96,12 +96,17 @@ public class RecordMapperGeneratorMojo extends AbstractMojo {
 
     int compileSources() throws IOException,
             DependencyResolutionRequiredException {
+        String src;
+        String target;
         if ( classesDir.endsWith( "test-classes" ) ) {
-            return runCompiler( project.getBuild().getTestSourceDirectory(),
-                    project.getBuild().getTestOutputDirectory() );
+            src = project.getBuild().getTestSourceDirectory();
+            target = project.getBuild().getTestOutputDirectory();
+        } else {
+            src = project.getBuild().getSourceDirectory();
+            target = project.getBuild().getOutputDirectory();
+
         }
-        return runCompiler( project.getBuild().getSourceDirectory(),
-                project.getBuild().getOutputDirectory() );
+        return runCompiler( src, target );
     }
 
     int runCompiler(String sources, String outDir) throws
@@ -135,7 +140,7 @@ public class RecordMapperGeneratorMojo extends AbstractMojo {
             } );
         }
         String[] result = null;
-        try (  Stream<Path> stream = Files.walk( Paths.get( startDir ),
+        try ( Stream<Path> stream = Files.walk( Paths.get( startDir ),
                 Integer.MAX_VALUE ) ) {
             result = stream
                     .filter( path -> !Files.isDirectory( path ) )
@@ -168,7 +173,7 @@ public class RecordMapperGeneratorMojo extends AbstractMojo {
         String repo = System.getProperty( "user.home" )
                 + fileSep + ".m2" + fileSep + "repository";
         return dependencies.stream()
-                .map( (Dependency d) -> {
+                .map( ( Dependency d ) -> {
                     String gid = d.getGroupId().replace( ".", fileSep );
                     String artifactId = d.getArtifactId();
                     String version = d.getVersion();

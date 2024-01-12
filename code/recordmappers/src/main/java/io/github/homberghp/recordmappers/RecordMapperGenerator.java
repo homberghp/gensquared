@@ -192,7 +192,6 @@ public class RecordMapperGenerator {
         if ( null == ann ) {
             return false;
         }
-        
         if ( ann.annotationType() == Generated.class ) {
             return true;
         }
@@ -206,8 +205,8 @@ public class RecordMapperGenerator {
         Field[] recordFields = rklass.getDeclaredFields();
         return Arrays.stream( recordFields )
                 .map( rc -> {
-                    Annotation[] declaredAnnotations = rc.getDeclaredAnnotations();
-                    Annotation ann = declaredAnnotations.length == 0 ? null : declaredAnnotations[ 0 ];
+                    Annotation[] annotations = rc.getAnnotations();
+                    Annotation ann = annotations.length == 0 ? null : annotations[ 0 ];
                     boolean generated = isGenerated( ann );
                     return """
                       new EditHelper( "%1$s", %2$s, %3$s )"""
