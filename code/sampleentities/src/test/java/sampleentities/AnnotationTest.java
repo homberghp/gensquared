@@ -15,9 +15,12 @@
  */
 package sampleentities;
 
+import io.github.homberghp.gensquared_annotations.ID;
 import org.junit.jupiter.api.*;
 import io.github.homberghp.recordmappers.RecordMapper;
 import io.github.homberghp.recordmappers.RecordMapper.EditHelper;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
@@ -27,13 +30,26 @@ import static org.assertj.core.api.Assertions.*;
  */
 public class AnnotationTest {
 
-    //@Disabled("think TDD")
-    @Test public void snummerHasId() {
+//    @Disabled( "think TDD" )
+    @Test public void snummerMapperHasId() {
         RecordMapper<Student, Integer> rm = RecordMapper.mapperFor( Student.class );
         List<EditHelper> editHelpers = rm.editHelpers();
         boolean allMatch = editHelpers.stream().filter( eh -> eh.fieldName().equals( "snummer" ) ).allMatch( eh -> eh.generated() );
-        assertThat( allMatch ).isTrue();
+        assertThat( allMatch ).as("mapper generator finds id").isTrue();
         System.out.println( "editHelpers = " + editHelpers );
-        fail( "method snummerHasId reached end. You know what to do." );
+//        fail( "method snummerMapperHasId reached end. You know what to do." );
     }
+
+    //@Disabled("think TDD")
+    @Test public void snummerHasId() throws NoSuchFieldException {
+        Class<Student> clz = Student.class;
+        Field[] fields = clz.getDeclaredFields();
+        System.out.println( "fields = " + Arrays.toString( fields ) );
+        Field snummerField = clz.getDeclaredField(  "snummer" );
+        ID annotation = snummerField.getDeclaredAnnotation(  ID.class );
+        assertThat( annotation ).isNotNull();
+//        fail( "method snummerHasId reached end. You know what to do." );
+    }
+    //@Disabled("think TDD")
+
 }
